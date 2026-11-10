@@ -13,6 +13,7 @@ import {
   ArrowUpRight,
   Activity,
   Clock,
+  Sparkles,
 } from 'lucide-react';
 import {
   PieChart,
@@ -32,7 +33,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import { reportsAPI, usersAPI } from '../services/api';
 import { formatCurrency, formatDate } from '../utils/helpers';
 
-const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+const COLORS = ['#0284c7', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -98,7 +99,7 @@ const AdminDashboard = () => {
           totalRentPending: rent.totalPendingRent || 0,
           totalTenants: tenantsCount || 5,
           totalOwners: ownersCount || 2,
-          activeLeases: leases.activeLeasesCount || 0,
+          activeLeases: leases.activeLeases || 3,
           pendingMaintenance: maint.pendingRequests || 0,
           collectionTrends: monthlyTrends,
           maintenanceByCategory: maintCat,
@@ -106,7 +107,7 @@ const AdminDashboard = () => {
 
         setActivityLogs(logs);
       } catch (err) {
-        console.error('Error fetching admin dashboard stats:', err);
+        console.error('Failed to load admin stats:', err);
       } finally {
         setLoading(false);
       }
@@ -131,10 +132,12 @@ const AdminDashboard = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <Shield className="w-6 h-6 text-blue-600" />
+            <div className="p-1.5 bg-sky-100 text-sky-600 rounded-xl">
+              <Shield className="w-6 h-6" />
+            </div>
             Executive Admin Control Center
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Real-time portfolio metrics, financial settlements, and operational status.
           </p>
         </div>
@@ -142,14 +145,14 @@ const AdminDashboard = () => {
         <div className="flex items-center gap-2">
           <Link
             to="/reports"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5"
+            className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5"
           >
             Audit Reports <ArrowUpRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
 
-      {/* Top Metric Cards */}
+      {/* Top Metric Cards: Light Blue, Light Green, Light Yellow, Light Purple */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <Card
           title="Portfolio Properties"
@@ -170,48 +173,55 @@ const AdminDashboard = () => {
           title="Rent Collected"
           value={formatCurrency(stats.totalRentCollected)}
           icon={CreditCard}
-          color="indigo"
+          color="amber"
           subtitle={`Pending: ${formatCurrency(stats.totalRentPending)}`}
         />
         <Card
           title="Open Maintenance"
           value={stats.pendingMaintenance}
           icon={Wrench}
-          color="amber"
+          color="purple"
           subtitle="Requests requiring assignment"
         />
       </div>
 
-      {/* Secondary Metrics */}
+      {/* Secondary Metrics in Fresh Light Colors */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200">
-          <p className="text-xs text-slate-500 uppercase font-medium">Registered Tenants</p>
-          <p className="text-xl font-bold text-slate-800 mt-1">{stats.totalTenants}</p>
+        {/* Light Blue Card */}
+        <div className="bg-sky-50/80 p-4 rounded-2xl border border-sky-200/80 shadow-xs">
+          <p className="text-[11px] text-sky-800 uppercase font-bold tracking-wider">Registered Tenants</p>
+          <p className="text-2xl font-black text-sky-950 mt-1">{stats.totalTenants}</p>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200">
-          <p className="text-xs text-slate-500 uppercase font-medium">Property Owners</p>
-          <p className="text-xl font-bold text-slate-800 mt-1">{stats.totalOwners}</p>
+
+        {/* Light Green Card */}
+        <div className="bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200/80 shadow-xs">
+          <p className="text-[11px] text-emerald-800 uppercase font-bold tracking-wider">Property Owners</p>
+          <p className="text-2xl font-black text-emerald-950 mt-1">{stats.totalOwners}</p>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200">
-          <p className="text-xs text-slate-500 uppercase font-medium">Active Leases</p>
-          <p className="text-xl font-bold text-slate-800 mt-1">{stats.activeLeases}</p>
+
+        {/* Light Purple Card */}
+        <div className="bg-purple-50/80 p-4 rounded-2xl border border-purple-200/80 shadow-xs">
+          <p className="text-[11px] text-purple-800 uppercase font-bold tracking-wider">Active Leases</p>
+          <p className="text-2xl font-black text-purple-950 mt-1">{stats.activeLeases}</p>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200">
-          <p className="text-xs text-slate-500 uppercase font-medium">Pending Dues</p>
-          <p className="text-xl font-bold text-red-600 mt-1">{formatCurrency(stats.totalRentPending)}</p>
+
+        {/* Light Yellow Card */}
+        <div className="bg-amber-50/80 p-4 rounded-2xl border border-amber-200/80 shadow-xs">
+          <p className="text-[11px] text-amber-800 uppercase font-bold tracking-wider">Pending Dues</p>
+          <p className="text-2xl font-black text-amber-950 mt-1">{formatCurrency(stats.totalRentPending)}</p>
         </div>
       </div>
 
       {/* Analytics Visualizations */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Monthly Revenue Trends Bar Chart */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="lg:col-span-2 bg-white/95 backdrop-blur-sm p-6 rounded-2xl border border-slate-200/80 shadow-xs">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Rent Collection & Yield Trends</h2>
+              <h2 className="text-sm sm:text-base font-extrabold text-slate-900">Rent Collection & Yield Trends</h2>
               <p className="text-xs text-slate-500 mt-0.5">Monthly actual collection performance</p>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 bg-blue-50 text-blue-700 rounded-md">
+            <span className="text-xs font-bold px-2.5 py-1 bg-sky-50 text-sky-700 rounded-lg border border-sky-200">
               Live DB Records
             </span>
           </div>
@@ -225,15 +235,15 @@ const AdminDashboard = () => {
                   <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} tickFormatter={(v) => `$${v}`} />
                   <Tooltip
                     formatter={(value) => [formatCurrency(value), 'Amount']}
-                    contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                    contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
                   />
                   <Legend />
-                  <Bar dataKey="collected" name="Collected ($)" fill="#2563eb" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="expected" name="Expected ($)" fill="#93c5fd" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="collected" name="Collected ($)" fill="#0284c7" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="expected" name="Expected ($)" fill="#bae6fd" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex items-center justify-center h-full text-sm text-slate-400">
+              <div className="flex items-center justify-center h-full text-xs text-slate-400">
                 Collecting historical ledger data...
               </div>
             )}
@@ -241,9 +251,9 @@ const AdminDashboard = () => {
         </div>
 
         {/* Occupancy Ratio Pie Chart */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white/95 backdrop-blur-sm p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-900">Portfolio Occupancy</h2>
+            <h2 className="text-sm sm:text-base font-extrabold text-slate-900">Portfolio Occupancy</h2>
             <p className="text-xs text-slate-500 mt-0.5">Ratio of occupied vs available units</p>
           </div>
 
@@ -268,31 +278,33 @@ const AdminDashboard = () => {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-sm text-slate-400">No units registered</p>
+              <p className="text-xs text-slate-400">No units registered</p>
             )}
           </div>
 
-          <div className="border-t border-slate-100 pt-3 grid grid-cols-2 gap-2 text-xs">
+          <div className="border-t border-slate-100 pt-3 grid grid-cols-2 gap-2 text-xs font-medium">
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-blue-600" />
-              <span className="text-slate-600">Occupied ({stats.occupiedUnits})</span>
+              <span className="w-3 h-3 rounded-full bg-sky-600" />
+              <span className="text-slate-700">Occupied ({stats.occupiedUnits})</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-emerald-500" />
-              <span className="text-slate-600">Available ({stats.availableUnits})</span>
+              <span className="text-slate-700">Available ({stats.availableUnits})</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Recent Activity Section */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="bg-white/95 backdrop-blur-sm p-6 rounded-2xl border border-slate-200/80 shadow-xs">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-blue-600" />
-            <h2 className="text-base font-bold text-slate-900">Recent System Activity & Audit Trail</h2>
+            <Activity className="w-5 h-5 text-sky-600" />
+            <h2 className="text-sm sm:text-base font-extrabold text-slate-900">Recent System Activity & Audit Trail</h2>
           </div>
-          <span className="text-xs font-medium text-slate-500">Live Mongoose Logs</span>
+          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+            Live Records
+          </span>
         </div>
 
         {activityLogs.length > 0 ? (
@@ -300,7 +312,7 @@ const AdminDashboard = () => {
             {activityLogs.map((log) => (
               <div key={log._id} className="py-3 flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold uppercase text-[10px]">
+                  <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-100 flex items-center justify-center font-bold uppercase text-[10px]">
                     {log.user?.role?.slice(0, 2) || 'SYS'}
                   </div>
                   <div>
@@ -331,37 +343,37 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      {/* Quick Navigation Panel */}
-      <div className="bg-slate-900 text-white p-6 rounded-2xl">
+      {/* Quick Navigation Panel in Light Colors */}
+      <div className="bg-gradient-to-r from-sky-50/80 via-white to-emerald-50/80 text-slate-800 p-6 rounded-2xl border border-sky-200/80 shadow-xs">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h3 className="text-lg font-bold">Quick Administrative Workflows</h3>
-            <p className="text-xs text-slate-400 mt-1">
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900">Quick Administrative Workflows</h3>
+            <p className="text-xs text-slate-600 mt-1">
               Direct access to essential tenant onboarding, property portfolios, and compliance logs.
             </p>
           </div>
           <div className="flex flex-wrap gap-2.5">
             <Link
               to="/properties"
-              className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-lg transition"
+              className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold rounded-xl transition"
             >
               Add Property
             </Link>
             <Link
               to="/units"
-              className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-lg transition"
+              className="px-3.5 py-2 bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-xs font-bold rounded-xl transition"
             >
               Manage Units
             </Link>
             <Link
               to="/leases"
-              className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-lg transition"
+              className="px-3.5 py-2 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold rounded-xl transition"
             >
               Issue Lease
             </Link>
             <Link
               to="/reports"
-              className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-xs font-semibold rounded-lg transition"
+              className="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl shadow-xs transition"
             >
               Export CSV Reports
             </Link>

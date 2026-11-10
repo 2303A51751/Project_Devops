@@ -562,33 +562,35 @@ const Reports = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-indigo-600" />
+          <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+            <div className="p-1.5 bg-sky-100 text-sky-600 rounded-xl">
+              <BarChart3 className="w-6 h-6" />
+            </div>
             Executive Intelligence & Auditing Reports
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Mandatory real estate analytics computed dynamically from MongoDB collections.
           </p>
         </div>
 
         <button
           onClick={handleExport}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5"
+          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
         >
           <Download className="w-4 h-4" /> Export Report (CSV)
         </button>
       </div>
 
       {/* Tab Selector */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-1.5 flex gap-1.5 overflow-x-auto">
+      <div className="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200/80 shadow-xs p-1.5 flex gap-1.5 overflow-x-auto">
         {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setActiveTab(t.key)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
               activeTab === t.key
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                ? 'bg-sky-600 text-white shadow-xs'
+                : 'text-slate-600 hover:bg-sky-50 hover:text-sky-900'
             }`}
           >
             <t.icon className="w-4 h-4" /> {t.label}
@@ -597,22 +599,22 @@ const Reports = () => {
       </div>
 
       {/* Date Filter Bar */}
-      <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-wrap items-center gap-3 text-xs">
-        <span className="font-semibold text-slate-700 flex items-center gap-1">
-          <Calendar className="w-4 h-4 text-slate-400" /> Date Filter:
+      <div className="bg-white/95 backdrop-blur-sm p-3.5 rounded-2xl border border-slate-200/80 flex flex-wrap items-center gap-3 text-xs shadow-xs">
+        <span className="font-bold text-slate-700 flex items-center gap-1">
+          <Calendar className="w-4 h-4 text-sky-600" /> Date Filter:
         </span>
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="px-2.5 py-1.5 border rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="px-2.5 py-1.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-sky-500"
         />
         <span className="text-slate-400">to</span>
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          className="px-2.5 py-1.5 border rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="px-2.5 py-1.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-sky-500"
         />
         {(startDate || endDate) && (
           <button
@@ -620,7 +622,7 @@ const Reports = () => {
               setStartDate('');
               setEndDate('');
             }}
-            className="text-xs text-indigo-600 font-semibold hover:underline"
+            className="text-xs text-sky-600 font-bold hover:underline"
           >
             Reset Filters
           </button>

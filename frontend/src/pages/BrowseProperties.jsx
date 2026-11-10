@@ -138,11 +138,13 @@ const BrowseProperties = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-          <Building2 className="w-6 h-6 text-blue-600" />
+        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+          <div className="p-1.5 bg-sky-100 text-sky-600 rounded-xl">
+            <Building2 className="w-6 h-6" />
+          </div>
           Available Units Catalog
         </h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-xs sm:text-sm text-slate-500 mt-1">
           Explore and apply for verified available properties with immediate move-in readiness.
         </p>
       </div>
@@ -254,7 +256,7 @@ const BrowseProperties = () => {
               <div className="p-5 pt-0">
                 <button
                   onClick={() => handleApplyClick(unit)}
-                  className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center justify-center gap-1.5"
                 >
                   Apply for Unit <ArrowRight className="w-4 h-4" />
                 </button>

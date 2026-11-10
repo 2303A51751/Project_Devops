@@ -186,10 +186,13 @@ const Maintenance = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <Wrench className="w-6 h-6 text-amber-600" /> Maintenance Operations
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <div className="p-1.5 bg-amber-100 text-amber-600 rounded-xl">
+              <Wrench className="w-6 h-6" />
+            </div>
+            Maintenance Operations
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Service requests, contractor dispatch, resolution logs, and repair expenses.
           </p>
         </div>
@@ -197,13 +200,13 @@ const Maintenance = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
           >
-            <Download className="w-4 h-4 text-slate-500" /> Export CSV
+            <Download className="w-4 h-4 text-sky-600" /> Export CSV
           </button>
           <button
             onClick={openCreateModal}
-            className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5"
+            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4" /> New Request
           </button>

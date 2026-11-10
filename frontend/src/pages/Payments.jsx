@@ -172,24 +172,27 @@ Authorized Property Operations & Financial Escrow
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <CreditCard className="w-6 h-6 text-emerald-600" /> Rent & Payment Ledger
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <div className="p-1.5 bg-emerald-100 text-emerald-600 rounded-xl">
+              <CreditCard className="w-6 h-6" />
+            </div>
+            Rent & Payment Ledger
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Financial transaction records, auto-generated digital receipts, and ledger auditing.
           </p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs"
           >
-            <Download className="w-4 h-4" /> Export CSV
+            <Download className="w-4 h-4 text-sky-600" /> Export CSV
           </button>
           {canRecord && (
             <button
               onClick={openRecordModal}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5"
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" /> Record Payment
             </button>
@@ -197,22 +200,27 @@ Authorized Property Operations & Financial Escrow
         </div>
       </div>
 
-      {/* Summary Cards */}
+      {/* Summary Cards in Light Green, Light Yellow, and Light Blue */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <p className="text-xs text-slate-500 uppercase font-semibold">Total Rent Collected</p>
-          <p className="text-2xl font-black text-emerald-600 mt-1">{formatCurrency(totalCollected)}</p>
-          <p className="text-[11px] text-slate-400 mt-1">Verified bank & digital settlements</p>
+        {/* Light Green */}
+        <div className="bg-emerald-50/80 p-5 rounded-2xl border border-emerald-200/80 shadow-xs">
+          <p className="text-[11px] text-emerald-800 uppercase font-bold tracking-wider">Total Rent Collected</p>
+          <p className="text-2xl font-black text-emerald-950 mt-1">{formatCurrency(totalCollected)}</p>
+          <p className="text-[11px] text-emerald-700 mt-1">Verified bank & digital settlements</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <p className="text-xs text-slate-500 uppercase font-semibold">Outstanding Pending Balance</p>
-          <p className="text-2xl font-black text-amber-600 mt-1">{formatCurrency(totalPending)}</p>
-          <p className="text-[11px] text-slate-400 mt-1">Awaiting tenant payment clearance</p>
+
+        {/* Light Yellow */}
+        <div className="bg-amber-50/80 p-5 rounded-2xl border border-amber-200/80 shadow-xs">
+          <p className="text-[11px] text-amber-800 uppercase font-bold tracking-wider">Outstanding Pending Balance</p>
+          <p className="text-2xl font-black text-amber-950 mt-1">{formatCurrency(totalPending)}</p>
+          <p className="text-[11px] text-amber-700 mt-1">Awaiting tenant payment clearance</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <p className="text-xs text-slate-500 uppercase font-semibold">Ledger Transactions</p>
-          <p className="text-2xl font-black text-slate-800 mt-1">{payments.length}</p>
-          <p className="text-[11px] text-slate-400 mt-1">Total recorded transaction receipts</p>
+
+        {/* Light Blue */}
+        <div className="bg-sky-50/80 p-5 rounded-2xl border border-sky-200/80 shadow-xs">
+          <p className="text-[11px] text-sky-800 uppercase font-bold tracking-wider">Ledger Transactions</p>
+          <p className="text-2xl font-black text-sky-950 mt-1">{payments.length}</p>
+          <p className="text-[11px] text-sky-700 mt-1">Total recorded transaction receipts</p>
         </div>
       </div>
 

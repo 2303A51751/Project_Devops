@@ -144,11 +144,13 @@ const Properties = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Building2 className="w-6 h-6 text-blue-600" />
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <div className="p-1.5 bg-sky-100 text-sky-600 rounded-xl">
+              <Building2 className="w-6 h-6" />
+            </div>
             Property Management
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Browse, configure, and maintain real estate holdings and unit configurations.
           </p>
         </div>
@@ -156,7 +158,7 @@ const Properties = () => {
         {canManage && (
           <button
             onClick={openCreateModal}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5"
+            className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4" /> Add Property
           </button>
