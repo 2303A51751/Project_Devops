@@ -2,11 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 
-// Load env vars
+// Load env vars (support both backend/ directory and workspace root)
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 dotenv.config();
 
 // Connect to database
@@ -56,7 +58,16 @@ const PORT = process.env.PORT || 5000;
 let server;
 if (process.env.NODE_ENV !== 'test') {
   server = app.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`\n⚠️  Port ${PORT} is already in use by another running process.`);
+      console.error(`👉 Close any running Node server on port ${PORT}, or set a different PORT in .env (e.g. PORT=5001).\n`);
+    } else {
+      console.error('Server error:', err);
+    }
   });
 }
 
