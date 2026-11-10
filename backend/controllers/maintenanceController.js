@@ -217,6 +217,9 @@ exports.updateRequestStatus = async (req, res, next) => {
     if (status === 'resolved') {
       request.resolvedDate = new Date();
       request.resolution = resolution || request.resolution;
+      if (req.body.actualCost !== undefined) {
+        request.actualCost = Number(req.body.actualCost) || 0;
+      }
     }
     await request.save();
 

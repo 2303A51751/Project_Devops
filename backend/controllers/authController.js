@@ -207,6 +207,70 @@ exports.forgotPassword = async (req, res, next) => {
     res.json({
       success: true,
       message: 'Password reset token generated. Check server console.',
+      resetToken, // Included for academic testing convenience
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Reset password using reset token
+// @route   POST /api/auth/reset-password/:token
+// @access  Public
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters',
+      });
+    }
+
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired reset token',
+      });
+    }
+
+    // Set new password
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    // Log activity
+    await ActivityLog.create({
+      user: user._id,
+      action: 'reset_password',
+      resourceType: 'User',
+      resourceId: user._id,
+      details: `User ${user.email} successfully reset their password`,
+      ipAddress: req.ip,
+    });
+
+    const authToken = user.generateAuthToken();
+
+    res.json({
+      success: true,
+      message: 'Password reset successful. You can now log in.',
+      token: authToken,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     next(error);

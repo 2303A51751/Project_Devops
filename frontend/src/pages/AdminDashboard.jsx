@@ -11,6 +11,8 @@ import {
   TrendingUp,
   Shield,
   ArrowUpRight,
+  Activity,
+  Clock,
 } from 'lucide-react';
 import {
   PieChart,
@@ -27,13 +29,14 @@ import {
 } from 'recharts';
 import Card from '../components/common/Card';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import { reportsAPI, usersAPI, propertiesAPI } from '../services/api';
-import { formatCurrency } from '../utils/helpers';
+import { reportsAPI, usersAPI } from '../services/api';
+import { formatCurrency, formatDate } from '../utils/helpers';
 
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [activityLogs, setActivityLogs] = useState([]);
   const [stats, setStats] = useState({
     totalProperties: 0,
     totalUnits: 0,
@@ -54,12 +57,13 @@ const AdminDashboard = () => {
     const fetchAdminStats = async () => {
       try {
         setLoading(true);
-        const [availRes, rentRes, leaseRes, maintRes, usersRes] = await Promise.all([
+        const [availRes, rentRes, leaseRes, maintRes, usersRes, logsRes] = await Promise.all([
           reportsAPI.propertyAvailability(),
           reportsAPI.rentCollection(),
           reportsAPI.leaseExpiry(),
           reportsAPI.maintenance(),
           usersAPI.getAll({ limit: 100 }).catch(() => ({ data: { data: [] } })),
+          usersAPI.getActivityLogs({ limit: 6 }).catch(() => ({ data: { data: [] } })),
         ]);
 
         const avail = availRes.data?.data || {};
@@ -67,6 +71,7 @@ const AdminDashboard = () => {
         const leases = leaseRes.data?.data || {};
         const maint = maintRes.data?.data || {};
         const usersList = usersRes.data?.data || [];
+        const logs = logsRes.data?.data || [];
 
         const tenantsCount = usersList.filter((u) => u.role === 'tenant').length;
         const ownersCount = usersList.filter((u) => u.role === 'owner').length;
@@ -98,6 +103,8 @@ const AdminDashboard = () => {
           collectionTrends: monthlyTrends,
           maintenanceByCategory: maintCat,
         });
+
+        setActivityLogs(logs);
       } catch (err) {
         console.error('Error fetching admin dashboard stats:', err);
       } finally {
@@ -276,6 +283,52 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Recent Activity Section */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-2">
+            <Activity className="w-5 h-5 text-blue-600" />
+            <h2 className="text-base font-bold text-slate-900">Recent System Activity & Audit Trail</h2>
+          </div>
+          <span className="text-xs font-medium text-slate-500">Live Mongoose Logs</span>
+        </div>
+
+        {activityLogs.length > 0 ? (
+          <div className="divide-y divide-slate-100">
+            {activityLogs.map((log) => (
+              <div key={log._id} className="py-3 flex items-center justify-between text-xs">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold uppercase text-[10px]">
+                    {log.user?.role?.slice(0, 2) || 'SYS'}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-800">
+                      {log.user?.name || 'System User'}{' '}
+                      <span className="font-normal text-slate-500">({log.user?.email || 'N/A'})</span>
+                    </p>
+                    <p className="text-slate-600 text-[11px] mt-0.5">{log.details || log.action}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-3 text-right">
+                  <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[10px] uppercase font-mono font-medium">
+                    {log.resourceType || log.action}
+                  </span>
+                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {formatDate(log.createdAt)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="py-8 text-center text-xs text-slate-400">
+            No recent activity recorded yet. User logins, leases, and payments will stream here in real-time.
+          </div>
+        )}
       </div>
 
       {/* Quick Navigation Panel */}

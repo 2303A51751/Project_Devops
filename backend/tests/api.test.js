@@ -18,11 +18,13 @@ beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
   await mongoose.connect(uri);
-});
+}, 180000);
 
 afterAll(async () => {
   await mongoose.disconnect();
-  await mongoServer.stop();
+  if (mongoServer) {
+    await mongoServer.stop();
+  }
 });
 
 describe('=== Property Rental Platform End-to-End Test Suite ===', () => {
@@ -227,5 +229,44 @@ describe('=== Property Rental Platform End-to-End Test Suite ===', () => {
     expect(res.body.data.summary).toHaveProperty('total');
     expect(res.body.data).toHaveProperty('byCategory');
     expect(res.body.data).toHaveProperty('byPriority');
+  });
+
+  // 9. Forgot & Reset Password Flow
+  test('POST /api/auth/forgot-password and /reset-password/:token should reset user password', async () => {
+    const forgotRes = await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: 'tenant@test.com' });
+
+    expect(forgotRes.status).toBe(200);
+    expect(forgotRes.body.success).toBe(true);
+    expect(forgotRes.body.resetToken).toBeDefined();
+
+    const token = forgotRes.body.resetToken;
+
+    const resetRes = await request(app)
+      .post(`/api/auth/reset-password/${token}`)
+      .send({ password: 'newpassword123' });
+
+    expect(resetRes.status).toBe(200);
+    expect(resetRes.body.success).toBe(true);
+
+    // Verify login with new password
+    const loginRes = await request(app).post('/api/auth/login').send({
+      email: 'tenant@test.com',
+      password: 'newpassword123',
+    });
+    expect(loginRes.status).toBe(200);
+    expect(loginRes.body.token).toBeDefined();
+  });
+
+  // 10. Activity Logs API
+  test('GET /api/users/activity-logs should return audit logs for admin', async () => {
+    const res = await request(app)
+      .get('/api/users/activity-logs')
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
   });
 });

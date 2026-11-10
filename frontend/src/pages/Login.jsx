@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Building2, Lock, Mail, ArrowRight, UserCheck, Shield } from 'lucide-react';
+import { Building2, Lock, Mail, ArrowRight, UserCheck, Shield, Key, CheckCircle2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { authAPI } from '../services/api';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -15,6 +16,15 @@ const Login = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Forgot Password Modal State
+  const [isForgotOpen, setIsForgotOpen] = useState(false);
+  const [forgotStep, setForgotStep] = useState(1); // 1: request token, 2: reset password
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [resetToken, setResetToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotStatus, setForgotStatus] = useState({ success: false, message: '' });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,6 +64,79 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRequestToken = async (e) => {
+    e.preventDefault();
+    if (!forgotEmail) {
+      toast.error('Please enter your registered email address');
+      return;
+    }
+
+    setForgotLoading(true);
+    setForgotStatus({ success: false, message: '' });
+
+    try {
+      const res = await authAPI.forgotPassword({ email: forgotEmail });
+      setForgotStatus({
+        success: true,
+        message: 'Reset token generated! For demo evaluation, it has been auto-filled below.',
+      });
+      if (res.data?.resetToken) {
+        setResetToken(res.data.resetToken);
+      }
+      setForgotStep(2);
+      toast.success('Reset token generated');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to generate reset token. User not found.';
+      setForgotStatus({ success: false, message: msg });
+      toast.error(msg);
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!resetToken || !newPassword) {
+      toast.error('Please provide both the reset token and your new password');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters');
+      return;
+    }
+
+    setForgotLoading(true);
+
+    try {
+      await authAPI.resetPassword(resetToken, { password: newPassword });
+      toast.success('Password successfully reset! You can now log in.');
+      setFormData({
+        email: forgotEmail,
+        password: newPassword,
+      });
+      setIsForgotOpen(false);
+      setForgotStep(1);
+      setForgotEmail('');
+      setResetToken('');
+      setNewPassword('');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Invalid or expired reset token';
+      toast.error(msg);
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const openForgotModal = () => {
+    setForgotEmail(formData.email || '');
+    setForgotStep(1);
+    setForgotStatus({ success: false, message: '' });
+    setResetToken('');
+    setNewPassword('');
+    setIsForgotOpen(true);
   };
 
   return (
@@ -108,9 +191,18 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                Password
-              </label>
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={openForgotModal}
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
+                >
+                  Forgot password?
+                </button>
+              </div>
               <div className="relative rounded-lg shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                   <Lock className="h-5 w-5" />
@@ -179,6 +271,148 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {isForgotOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div className="flex items-center space-x-2">
+                <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                  <Key className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">
+                    {forgotStep === 1 ? 'Reset Password' : 'Set New Password'}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {forgotStep === 1
+                      ? 'Step 1 of 2: Generate reset token'
+                      : 'Step 2 of 2: Apply your new password'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsForgotOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {forgotStatus.message && (
+              <div
+                className={`mx-5 mt-4 p-3 rounded-lg text-xs font-medium border ${
+                  forgotStatus.success
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                    : 'bg-red-50 text-red-800 border-red-200'
+                }`}
+              >
+                {forgotStatus.message}
+              </div>
+            )}
+
+            {forgotStep === 1 ? (
+              <form onSubmit={handleRequestToken} className="p-5 space-y-4">
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Enter your registered account email. A secure reset token will be generated on the server.
+                </p>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">
+                    Registered Email
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="e.g. tenant1@test.com"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsForgotOpen(false)}
+                    className="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-xs font-medium hover:bg-slate-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={forgotLoading}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition disabled:opacity-50"
+                  >
+                    {forgotLoading ? 'Processing...' : 'Request Token'}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleResetPassword} className="p-5 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">
+                    Reset Token
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={resetToken}
+                    onChange={(e) => setResetToken(e.target.value)}
+                    placeholder="Paste 64-char hex token"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-0.5 block">
+                    Auto-filled from demo environment response
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Minimum 6 characters"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-between items-center">
+                  <button
+                    type="button"
+                    onClick={() => setForgotStep(1)}
+                    className="text-xs text-blue-600 hover:underline"
+                  >
+                    Back to step 1
+                  </button>
+                  <div className="flex space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsForgotOpen(false)}
+                      className="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-xs font-medium hover:bg-slate-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={forgotLoading}
+                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition disabled:opacity-50"
+                    >
+                      {forgotLoading ? 'Updating...' : 'Set New Password'}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

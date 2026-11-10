@@ -41,6 +41,8 @@ export const authAPI = {
   getMe: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/profile', data),
   changePassword: (data) => api.put('/auth/change-password', data),
+  forgotPassword: (data) => api.post('/auth/forgot-password', data),
+  resetPassword: (token, data) => api.post(`/auth/reset-password/${token}`, data),
 };
 
 // ============ PROPERTIES ============
@@ -122,6 +124,7 @@ export const usersAPI = {
   getById: (id) => api.get(`/users/${id}`),
   update: (id, data) => api.put(`/users/${id}`, data),
   delete: (id) => api.delete(`/users/${id}`),
+  getActivityLogs: (params) => api.get('/users/activity-logs', { params }),
 };
 
 // ============ DASHBOARD ============

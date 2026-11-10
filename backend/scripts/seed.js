@@ -605,6 +605,27 @@ const seedDB = async () => {
         details: 'Added Grand Horizon Luxury Residences to system portfolio.',
         ipAddress: '127.0.0.1',
       },
+      {
+        user: manager1._id,
+        action: 'issue_lease',
+        resourceType: 'Lease',
+        details: 'Issued residential lease agreement for Unit 101 to Michael Chen.',
+        ipAddress: '127.0.0.1',
+      },
+      {
+        user: tenant1._id,
+        action: 'payment_submitted',
+        resourceType: 'Payment',
+        details: 'Submitted monthly rent payment via ACH Bank Transfer ($2,400.00).',
+        ipAddress: '127.0.0.1',
+      },
+      {
+        user: tenant2._id,
+        action: 'maintenance_requested',
+        resourceType: 'MaintenanceRequest',
+        details: 'Submitted high-priority HVAC maintenance ticket for Unit 202.',
+        ipAddress: '127.0.0.1',
+      },
     ]);
 
     console.log('=============================================');

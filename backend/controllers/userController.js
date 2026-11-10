@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const ActivityLog = require('../models/ActivityLog');
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -122,6 +123,27 @@ exports.getUsersByRole = async (req, res, next) => {
     const users = await User.find({ role, isActive: true }).sort({ name: 1 });
 
     res.json({ success: true, count: users.length, data: users });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get system activity logs
+// @route   GET /api/users/activity-logs
+// @access  Admin
+exports.getActivityLogs = async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit, 10) || 15;
+    const logs = await ActivityLog.find()
+      .populate('user', 'name email role')
+      .sort({ createdAt: -1 })
+      .limit(limit);
+
+    res.json({
+      success: true,
+      count: logs.length,
+      data: logs,
+    });
   } catch (error) {
     next(error);
   }
