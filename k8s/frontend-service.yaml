@@ -4,9 +4,10 @@ metadata:
   name: frontend-service
   namespace: rental-platform
 spec:
+  type: NodePort
   selector:
     app: frontend
   ports:
     - port: 80
       targetPort: 80
-  type: NodePort
+      nodePort: 30080
