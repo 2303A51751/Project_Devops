@@ -375,7 +375,7 @@ async function runDemo() {
   console.log(`  Amount Paid:    $${receiptRes.body.data.amount.toFixed(2)}`);
   console.log(`  Status:         ${receiptRes.body.data.status.toUpperCase()}`);
   console.log(`  Transaction ID: ${receiptRes.body.data.transactionId}`);
-  console.log(`  Date:           ${new Date(receiptRes.body.data.paymentDate).toLocaleString()}`);
+  console.log(`  Date:           ${new Date(receiptRes.body.data.date || receiptRes.body.data.paymentDate || Date.now()).toLocaleDateString()}`);
 
   // ==========================================
   // 7. OWNER WORKFLOW DEMO
