@@ -16,3 +16,4 @@ Write-Host "  Both services launched in separate windows!" -ForegroundColor Gree
 Write-Host "  Frontend URL: http://localhost:3000" -ForegroundColor Cyan
 Write-Host "  Backend API:  http://localhost:5000/api" -ForegroundColor Cyan
 Write-Host "===================================================" -ForegroundColor Green
+
