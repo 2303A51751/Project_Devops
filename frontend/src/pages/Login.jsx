@@ -48,7 +48,20 @@ const Login = () => {
       navigate(dest, { replace: true });
     } catch (err) {
       console.error('Login error:', err);
-      const msg = err.response?.data?.message || err.message || 'Invalid email or password. Please try again.';
+      let msg = err.response?.data?.message;
+      if (!msg) {
+        if (
+          err.response?.status === 500 ||
+          err.response?.status === 503 ||
+          err.message?.includes('500') ||
+          err.message?.includes('Network Error')
+        ) {
+          msg =
+            'Backend server on port 5000 is not reachable. Please ensure the backend is running (cd backend && npm run dev, or run start-dev.bat).';
+        } else {
+          msg = err.message || 'Invalid email or password. Please try again.';
+        }
+      }
       setError(msg);
     } finally {
       setLoading(false);
