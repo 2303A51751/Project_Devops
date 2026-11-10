@@ -29,14 +29,21 @@ exports.register = async (req, res, next) => {
 
     const token = user.generateAuthToken();
 
+    const userInfo = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+
     res.status(201).json({
       success: true,
       token,
+      user: userInfo,
       data: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
+        ...userInfo,
+        token,
+        user: userInfo,
       },
     });
   } catch (error) {
@@ -80,14 +87,21 @@ exports.login = async (req, res, next) => {
 
     const token = user.generateAuthToken();
 
+    const userInfo = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+
     res.json({
       success: true,
       token,
+      user: userInfo,
       data: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
+        ...userInfo,
+        token,
+        user: userInfo,
       },
     });
   } catch (error) {

@@ -31,8 +31,33 @@ const Login = () => {
     setError('');
   };
 
-  const handleDemoFill = (email, password) => {
+  const executeLogin = async (credentials) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const user = await login(credentials);
+      // Route by role
+      const dashMap = {
+        admin: '/admin/dashboard',
+        owner: '/owner/dashboard',
+        tenant: '/tenant/dashboard',
+        manager: '/manager/dashboard',
+      };
+      const dest = location.state?.from?.pathname || dashMap[user?.role] || '/';
+      navigate(dest, { replace: true });
+    } catch (err) {
+      console.error('Login error:', err);
+      const msg = err.response?.data?.message || err.message || 'Invalid email or password. Please try again.';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoFill = async (email, password) => {
     setFormData({ email, password });
+    await executeLogin({ email, password });
   };
 
   const handleSubmit = async (e) => {
@@ -41,29 +66,7 @@ const Login = () => {
       setError('Please provide both email and password.');
       return;
     }
-
-    setLoading(true);
-    setError('');
-
-    try {
-      const user = await login(formData);
-      // Route by role
-      const dashMap = {
-        admin: '/admin/dashboard',
-        owner: '/owner/dashboard',
-        tenant: '/tenant/dashboard',
-        manager: '/manager/dashboard',
-      };
-      const dest = location.state?.from?.pathname || dashMap[user.role] || '/';
-      navigate(dest, { replace: true });
-    } catch (err) {
-      console.error('Login error:', err);
-      const msg = err.response?.data?.message || 'Invalid email or password. Please try again.';
-      setError(msg);
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
+    await executeLogin(formData);
   };
 
   const handleRequestToken = async (e) => {

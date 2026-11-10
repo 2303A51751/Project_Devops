@@ -50,16 +50,26 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (credentials) => {
     try {
       const response = await authAPI.login(credentials);
-      const { token: authToken, user: userData } = response.data.data || response.data;
+      // Support all backend response formats
+      const authToken = response.data.token || response.data.data?.token;
+      const userData =
+        response.data.user ||
+        response.data.data?.user ||
+        response.data.data ||
+        response.data;
+
+      if (!authToken || !userData) {
+        throw new Error('Authentication token or user data was not returned');
+      }
 
       localStorage.setItem('token', authToken);
       localStorage.setItem('user', JSON.stringify(userData));
       setToken(authToken);
       setUser(userData);
-      toast.success('Login successful!');
+      toast.success(`Welcome back, ${userData.name || 'User'}!`);
       return userData;
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
+      const message = error.response?.data?.message || error.message || 'Login failed. Please check your credentials.';
       toast.error(message);
       throw error;
     }
