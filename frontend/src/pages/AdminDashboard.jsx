@@ -125,11 +125,11 @@ const AdminDashboard = () => {
           reportsAPI.rentCollection().catch(() => ({ data: { data: {} } })),
           reportsAPI.leaseExpiry().catch(() => ({ data: { data: {} } })),
           reportsAPI.maintenance().catch(() => ({ data: { data: {} } })),
-          usersAPI.getAll({ limit: 100 }).catch(() => ({ data: { data: [] } })),
-          usersAPI.getActivityLogs({ limit: 10 }).catch(() => ({ data: { data: [] } })),
-          leasesAPI.getAll({ limit: 100 }).catch(() => ({ data: { data: [] } })),
-          applicationsAPI.getAll({ limit: 100 }).catch(() => ({ data: { data: [] } })),
-          maintenanceAPI.getAll({ limit: 100 }).catch(() => ({ data: { data: [] } })),
+          usersAPI.getAll({ limit: 200 }).catch(() => ({ data: { data: [] } })),
+          usersAPI.getActivityLogs({ limit: 20 }).catch(() => ({ data: { data: [] } })),
+          leasesAPI.getAll({ limit: 200 }).catch(() => ({ data: { data: [] } })),
+          applicationsAPI.getAll({ limit: 200 }).catch(() => ({ data: { data: [] } })),
+          maintenanceAPI.getAll({ limit: 200 }).catch(() => ({ data: { data: [] } })),
         ]);
 
       const avail = availRes.data?.data || {};
@@ -620,10 +620,10 @@ const AdminDashboard = () => {
                 className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-bold focus:outline-none"
               >
                 <option value="all">All Roles ({usersList.length})</option>
-                <option value="admin">Admins (2)</option>
-                <option value="owner">Owners (6)</option>
-                <option value="manager">Managers (5)</option>
-                <option value="tenant">Tenants (17)</option>
+                <option value="admin">Admins ({usersList.filter((u) => u.role === 'admin').length})</option>
+                <option value="owner">Owners ({usersList.filter((u) => u.role === 'owner').length})</option>
+                <option value="manager">Managers ({usersList.filter((u) => u.role === 'manager').length})</option>
+                <option value="tenant">Tenants ({usersList.filter((u) => u.role === 'tenant').length})</option>
               </select>
             )}
 
