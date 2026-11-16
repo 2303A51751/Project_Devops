@@ -1,6 +1,27 @@
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 let memoryServerInstance = null;
+
+const cleanupStaleMongoMemDirs = () => {
+  try {
+    const tempDir = process.env.TEMP || '/tmp';
+    const entries = fs.readdirSync(tempDir);
+    const now = Date.now();
+    for (const entry of entries) {
+      if (entry.startsWith('mongo-mem-')) {
+        try {
+          const stat = fs.statSync(path.join(tempDir, entry));
+          // Only clean directories older than 5 minutes to never disturb an active instance
+          if (now - stat.mtimeMs > 5 * 60 * 1000) {
+            fs.rmSync(path.join(tempDir, entry), { recursive: true, force: true });
+          }
+        } catch (_) {}
+      }
+    }
+  } catch (_) {}
+};
 
 const autoSeedIfNeeded = async () => {
   try {
@@ -33,6 +54,7 @@ const connectDB = async () => {
     // In non-production environments, provide automated In-Memory MongoDB fallback
     if (process.env.NODE_ENV !== 'production') {
       try {
+        cleanupStaleMongoMemDirs();
         console.log('🚀 Launching automated In-Memory MongoDB server for development...');
         const { MongoMemoryServer } = require('mongodb-memory-server');
         memoryServerInstance = await MongoMemoryServer.create();
@@ -51,5 +73,19 @@ const connectDB = async () => {
     process.exit(1);
   }
 };
+
+process.on('SIGINT', async () => {
+  if (memoryServerInstance) {
+    try { await memoryServerInstance.stop(); } catch (_) {}
+  }
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  if (memoryServerInstance) {
+    try { await memoryServerInstance.stop(); } catch (_) {}
+  }
+  process.exit(0);
+});
 
 module.exports = connectDB;
