@@ -25,3 +25,4 @@ echo Use "docker compose logs -f" to stream live logs.
 echo Use "docker-stop.bat" or "docker compose down" to stop containers.
 echo.
 pause
+

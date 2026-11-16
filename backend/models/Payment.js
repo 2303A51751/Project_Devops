@@ -39,7 +39,7 @@ const PaymentSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       enum: {
-        values: ['cash', 'check', 'bank_transfer', 'online'],
+        values: ['cash', 'check', 'bank_transfer', 'online', 'credit_card', 'debit_card'],
         message: '{VALUE} is not a valid payment method',
       },
       required: [true, 'Payment method is required'],

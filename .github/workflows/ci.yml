@@ -91,3 +91,4 @@ jobs:
           context: ./frontend
           push: false
           tags: property-rental-frontend:ci-check
+
