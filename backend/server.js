@@ -38,6 +38,18 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Development database seed trigger
+app.post('/api/dev/reseed', async (req, res) => {
+  try {
+    const { seedData } = require('./scripts/seeder');
+    await seedData();
+    res.json({ success: true, message: 'Database reseeded successfully with full dataset' });
+  } catch (err) {
+    console.error('Reseed error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Mount routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
