@@ -9,7 +9,7 @@ const Notification = require('../models/Notification');
 const ActivityLog = require('../models/ActivityLog');
 
 const seedData = async () => {
-  console.log('📦 Seeding database collections with 55 users and full enterprise datasets...');
+  console.log('📦 Seeding database collections with 75 users and full enterprise datasets...');
 
   // Clear existing records
   await Promise.all([
@@ -24,7 +24,7 @@ const seedData = async () => {
     ActivityLog.deleteMany({}),
   ]);
 
-  // 1. Create Users (55 Users Total: 4 Admins, 10 Owners, 8 Managers, 33 Tenants)
+  // 1. Create Users (75 Users Total: 6 Admins, 14 Owners, 12 Managers, 43 Tenants)
   const usersData = [
     // --- 4 Admins ---
     {
@@ -473,6 +473,172 @@ const seedData = async () => {
       phone: '+1-555-0245',
       address: '1801 16th St, Denver, CO 80202',
     },
+
+    // --- 20 Additional Users (Total: 75 Users) ---
+    // 2 Admins
+    {
+      name: 'Jonathan Hayes (Admin)',
+      email: 'admin5@propertymanager.com',
+      password: 'admin123',
+      role: 'admin',
+      phone: '+1-555-0246',
+      address: '700 Grand Concourse, Bronx, NY 10451',
+    },
+    {
+      name: 'Samantha Wright (Admin)',
+      email: 'admin6@propertymanager.com',
+      password: 'admin123',
+      role: 'admin',
+      phone: '+1-555-0247',
+      address: '1000 Wilshire Blvd, Los Angeles, CA 90017',
+    },
+    // 4 Owners
+    {
+      name: 'Gregory House (Owner)',
+      email: 'owner11@test.com',
+      password: 'owner123',
+      role: 'owner',
+      phone: '+1-555-0248',
+      address: '221B Baker Street, Suite 4, Princeton, NJ 08540',
+    },
+    {
+      name: 'Julianne Moore (Owner)',
+      email: 'owner12@test.com',
+      password: 'owner123',
+      role: 'owner',
+      phone: '+1-555-0249',
+      address: '350 Fifth Ave, Suite 7100, New York, NY 10118',
+    },
+    {
+      name: 'Christopher Nolan (Owner)',
+      email: 'owner13@test.com',
+      password: 'owner123',
+      role: 'owner',
+      phone: '+1-555-0250',
+      address: '10 Universal City Plaza, Universal City, CA 91608',
+    },
+    {
+      name: 'Katherine Pierce (Owner)',
+      email: 'owner14@test.com',
+      password: 'owner123',
+      role: 'owner',
+      phone: '+1-555-0251',
+      address: '800 Brickell Ave, Penthouse 1, Miami, FL 33131',
+    },
+    // 4 Managers
+    {
+      name: 'Dominic Toretto (Manager)',
+      email: 'manager9@test.com',
+      password: 'manager123',
+      role: 'manager',
+      phone: '+1-555-0252',
+      address: '1327 East 7th St, Los Angeles, CA 90021',
+    },
+    {
+      name: 'Natasha Romanoff (Manager)',
+      email: 'manager10@test.com',
+      password: 'manager123',
+      role: 'manager',
+      phone: '+1-555-0253',
+      address: '500 5th Avenue, Suite 1900, New York, NY 10110',
+    },
+    {
+      name: 'Bruce Wayne (Manager)',
+      email: 'manager11@test.com',
+      password: 'manager123',
+      role: 'manager',
+      phone: '+1-555-0254',
+      address: '1007 Mountain Drive, Gotham, NJ 07001',
+    },
+    {
+      name: 'Diana Prince (Manager)',
+      email: 'manager12@test.com',
+      password: 'manager123',
+      role: 'manager',
+      phone: '+1-555-0255',
+      address: '1775 I Street NW, Washington, DC 20006',
+    },
+    // 10 Tenants
+    {
+      name: 'Ethan Hunt (Tenant)',
+      email: 'tenant34@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0256',
+      address: 'Unit 102, Langley Highrise, McLean, VA 22101',
+    },
+    {
+      name: 'Clara Oswald (Tenant)',
+      email: 'tenant35@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0257',
+      address: 'Apt 4B, Coal Hill Residences, London, OH 43140',
+    },
+    {
+      name: 'Matthew Murdock (Tenant)',
+      email: 'tenant36@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0258',
+      address: 'Apt 21, Hells Kitchen Lofts, New York, NY 10019',
+    },
+    {
+      name: 'Jessica Jones (Tenant)',
+      email: 'tenant37@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0259',
+      address: 'Suite 3A, Alias Residences, New York, NY 10011',
+    },
+    {
+      name: 'Luke Cage (Tenant)',
+      email: 'tenant38@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0260',
+      address: '125th Street Apt 5, Harlem, NY 10027',
+    },
+    {
+      name: 'Daniel Rand (Tenant)',
+      email: 'tenant39@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0261',
+      address: 'Penthouse B, Chinatown Gateway, New York, NY 10013',
+    },
+    {
+      name: 'Wanda Maximoff (Tenant)',
+      email: 'tenant40@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0262',
+      address: '2800 Westview Drive, Westview, NJ 07002',
+    },
+    {
+      name: 'Stephen Strange (Tenant)',
+      email: 'tenant41@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0263',
+      address: '177A Bleecker St, Greenwich Village, NY 10012',
+    },
+    {
+      name: 'Peter Parker (Tenant)',
+      email: 'tenant42@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0264',
+      address: '20 Ingram St, Forest Hills, NY 11375',
+    },
+    {
+      name: 'Miles Morales (Tenant)',
+      email: 'tenant43@test.com',
+      password: 'tenant123',
+      role: 'tenant',
+      phone: '+1-555-0265',
+      address: '1400 Brooklyn Ave, Brooklyn, NY 11203',
+    },
   ];
 
   const createdUsers = [];
@@ -828,7 +994,7 @@ const seedData = async () => {
     });
   }
 
-  console.log('✅ Database successfully seeded with 55 users, 30 leases, 25 applications, and 40 repairs across all 8 categories!');
+  console.log('✅ Database successfully seeded with 75 users, 30 leases, 25 applications, and 40 repairs across all 8 categories!');
 };
 
 module.exports = { seedData };
