@@ -15,6 +15,7 @@ echo.
 echo ===================================================
 echo   Both services launched in separate windows!
 echo   Frontend URL: http://localhost:3000
+
 echo   Backend API:  http://localhost:5000/api
 echo ===================================================
 pause

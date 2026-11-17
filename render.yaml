@@ -1,0 +1,43 @@
+services:
+  # -------------------------------------------------------------
+  # 1. Backend REST API Web Service
+  # -------------------------------------------------------------
+  - type: web
+    name: property-rental-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRE
+        value: 7d
+      - key: MONGODB_URI
+        sync: false # Supply your MongoDB Atlas connection string in Render Dashboard
+
+  # -------------------------------------------------------------
+  # 2. Frontend React 18 Single Page Application (Static Site)
+  # -------------------------------------------------------------
+  - type: static
+    name: property-rental-frontend
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: property-rental-backend
+          property: host
