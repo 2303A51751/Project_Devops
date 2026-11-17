@@ -84,14 +84,17 @@ const Login = () => {
       console.error('Login error:', err);
       let msg = err.response?.data?.message;
       if (!msg) {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         if (
           err.response?.status === 500 ||
+          err.response?.status === 502 ||
           err.response?.status === 503 ||
           err.message?.includes('500') ||
           err.message?.includes('Network Error')
         ) {
-          msg =
-            'Backend server on port 5000 is not reachable. Please ensure the backend is running (cd backend && npm run dev, or run start-dev.bat).';
+          msg = isLocal
+            ? 'Backend server on port 5000 is not reachable. Please ensure the backend is running (cd backend && npm run dev, or run start-dev.bat).'
+            : `Backend API is currently not reachable (${err.response?.status || err.message || 'Connection Error'}). If using separate services on Render, ensure VITE_API_URL is configured in your Frontend environment settings.`;
         } else {
           msg = err.message || 'Invalid email or password. Please try again.';
         }

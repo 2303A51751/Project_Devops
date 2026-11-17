@@ -51,25 +51,24 @@ const connectDB = async () => {
   } catch (primaryError) {
     console.warn(`⚠️ Primary MongoDB connection failed (${primaryError.message}).`);
 
-    // In non-production environments, provide automated In-Memory MongoDB fallback
-    if (process.env.NODE_ENV !== 'production') {
-      try {
-        cleanupStaleMongoMemDirs();
-        console.log('🚀 Launching automated In-Memory MongoDB server for development...');
-        const { MongoMemoryServer } = require('mongodb-memory-server');
-        memoryServerInstance = await MongoMemoryServer.create();
-        const memUri = memoryServerInstance.getUri();
+    // Launch automated In-Memory MongoDB fallback so deployment (Render / Cloud / Local) always functions
+    try {
+      cleanupStaleMongoMemDirs();
+      console.log('🚀 Launching automated In-Memory MongoDB fallback server...');
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      memoryServerInstance = await MongoMemoryServer.create();
+      const memUri = memoryServerInstance.getUri();
 
-        const conn = await mongoose.connect(memUri);
-        console.log(`✅ Connected to local In-Memory MongoDB at: ${memUri}`);
-        await autoSeedIfNeeded();
-        return conn;
-      } catch (fallbackError) {
-        console.error('❌ Failed to launch in-memory MongoDB fallback:', fallbackError.message);
-      }
+      const conn = await mongoose.connect(memUri);
+      console.log(`✅ Connected to In-Memory MongoDB at: ${memUri}`);
+      console.log('💡 Note: To persist data permanently across cloud restarts, configure MONGODB_URI in your Render Environment settings.');
+      await autoSeedIfNeeded();
+      return conn;
+    } catch (fallbackError) {
+      console.error('❌ Failed to launch in-memory MongoDB fallback:', fallbackError.message);
     }
 
-    console.error('❌ Could not establish database connection. Please ensure MongoDB is running or configure MONGODB_URI.');
+    console.error('❌ Could not establish database connection. Please configure MONGODB_URI.');
     process.exit(1);
   }
 };
