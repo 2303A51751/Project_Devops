@@ -1,9 +1,25 @@
 import axios from 'axios';
 
+// Dynamically compute baseURL so that cloud deployments (Render, Vercel, etc.)
+// always route correctly even if VITE_API_URL was accidentally set to localhost in cloud env vars
+const getBaseURL = () => {
+  const isBrowser = typeof window !== 'undefined';
+  const isRemote = isBrowser && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
+  let apiUrl = import.meta.env.VITE_API_URL;
+  if (apiUrl && isRemote && (apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1'))) {
+    // If hosted remotely (e.g. on Render), ignore any accidental localhost value and use relative /api
+    apiUrl = '';
+  }
+
+  if (apiUrl) {
+    return `${apiUrl.replace(/\/$/, '')}/api`;
+  }
+  return '/api';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL
-    ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api`
-    : '/api',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
