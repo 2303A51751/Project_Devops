@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Property Rental and Tenant Management Platform - Complete MERN Stack + DevOps Project",
   "private": true,
+  "main": "server.js",
   "scripts": {
+    "start": "node backend/server.js",
+    "postinstall": "npm --prefix backend install",
     "backend": "npm run dev --prefix backend",
     "frontend": "npm run dev --prefix frontend",
     "seed": "npm run seed --prefix backend",
